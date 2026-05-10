@@ -218,7 +218,7 @@ export default function CreateTripPage() {
                     <input 
                       type="url" 
                       className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-14 py-5 text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all" 
-                      placeholder="Paste Unsplash URL here..."
+                      placeholder="e.g. https://images.unsplash.com/photo-123..."
                       value={coverUrl}
                       onChange={(e) => {
                         setCoverUrl(e.target.value);
@@ -226,9 +226,12 @@ export default function CreateTripPage() {
                       }}
                     />
                   </div>
+                  <p className="mt-4 text-[10px] text-[var(--color-text-muted)] italic leading-relaxed px-1">
+                    <span className="text-[var(--color-primary)] font-bold">Pro Tip:</span> Right-click any image you like on the web and select <span className="text-white">"Copy Image Address"</span> to get the perfect link.
+                  </p>
                 </div>
 
-                <div className="aspect-video w-full rounded-3xl bg-[var(--color-bg)] border border-[var(--color-border)] overflow-hidden relative shadow-inner">
+                <div className="aspect-video w-full rounded-3xl bg-[var(--color-bg)] border border-[var(--color-border)] overflow-hidden relative shadow-inner group">
                   {coverUrl && !imgError ? (
                     <img 
                       src={coverUrl} 
@@ -236,10 +239,19 @@ export default function CreateTripPage() {
                       alt="Preview" 
                       onError={() => setImgError(true)}
                     />
+                  ) : coverUrl && imgError ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-red-500/5">
+                      <ImageIcon size={48} className="text-red-400/40 mb-4" />
+                      <p className="text-xs font-bold text-red-400/60 mb-2">Invalid Image Link</p>
+                      <p className="text-[10px] text-[var(--color-text-muted)] italic">
+                        This looks like a web page link. Please right-click the image itself and select "Copy Image Address".
+                      </p>
+                    </div>
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--color-text-muted)] opacity-30 p-6 text-center">
-                      <ImageIcon size={64} strokeWidth={1} className="mb-4" />
+                      <Camera size={64} strokeWidth={1} className="mb-4" />
                       <p className="text-[10px] uppercase font-black tracking-widest">Image Preview</p>
+                      <p className="text-[9px] mt-2 italic">A beautiful city photo will be chosen for you if left blank</p>
                     </div>
                   )}
                 </div>
