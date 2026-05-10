@@ -41,6 +41,13 @@ export default function CreateTripPage() {
     setError(null)
 
     try {
+      // STATIC MODE: Just navigate to builder with a mock ID
+      setTimeout(() => {
+        navigate(`/trips/mock-trip-123/builder`)
+        setLoading(false)
+      }, 800)
+      
+      /* Supabase logic commented out for static test
       const { data, error: insertError } = await supabase
         .from('trips')
         .insert([{ 
@@ -58,73 +65,70 @@ export default function CreateTripPage() {
 
       if (insertError) throw insertError
       navigate(`/trips/${data.id}/builder`)
+      */
     } catch (err) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] pb-24">
-      {/* Dynamic Header */}
-      <div className="relative h-64 bg-[var(--color-secondary)] overflow-hidden">
-        {coverUrl && !imgError ? (
-          <motion.img 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            src={coverUrl} 
-            alt="Preview" 
-            className="w-full h-full object-cover"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] opacity-40"></div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent"></div>
+    <div className="min-h-screen bg-[var(--color-bg)] pb-24 md:pb-32">
+      {/* Dark Cinematic Header */}
+      <div className="relative h-[300px] md:h-[380px] flex items-start overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-bg)] via-[var(--color-surface)] to-black z-10 opacity-90"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80')] bg-cover bg-center opacity-20"></div>
         
-        <div className="absolute inset-0 flex items-center justify-center pt-12">
-          <div className="container mx-auto px-6">
-            <button 
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors font-medium"
-            >
-              <ArrowLeft size={18} /> Back to Dashboard
+        <div className="container mx-auto px-6 relative z-20 pt-24 md:pt-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-4xl"
+          >
+            <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-[9px] md:text-[10px] font-black text-[var(--color-primary)] uppercase tracking-[0.2em] md:tracking-[0.3em] mb-4 md:mb-8 hover:opacity-70 transition-all group">
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
             </button>
-            <h1 className="font-display text-5xl md:text-6xl font-bold text-white italic drop-shadow-lg">
+            <h1 className="font-display text-4xl sm:text-6xl md:text-8xl font-black text-[var(--color-secondary)] italic tracking-tighter leading-tight mb-3 md:mb-4 drop-shadow-sm">
               {name || 'New Adventure'}
             </h1>
-          </div>
+            <p className="text-[var(--color-text-muted)] text-sm md:text-xl italic opacity-80 max-w-2xl font-medium">
+              Every great journey begins with a single step. Define your path and start the discovery.
+            </p>
+          </motion.div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 -mt-12 relative z-10">
-        <form onSubmit={handleCreate} className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+      <div className="container mx-auto px-6 -mt-16 md:-mt-20 relative z-30">
+        <form onSubmit={handleCreate} className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
           {/* Left - Form Fields */}
-          <div className="lg:col-span-2 space-y-8">
-            <section className="card shadow-2xl border-none">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-xl">
-                  <Info size={20} />
+          <div className="lg:col-span-2 space-y-8 md:space-y-10">
+            <section className="card p-6 md:p-10 bg-[var(--color-surface)] border-[var(--color-border)] shadow-2xl">
+              <div className="flex items-center gap-3 mb-8 md:mb-10">
+                <div className="p-3 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-2xl">
+                  <Info size={24} />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-[var(--color-secondary)]">Trip Details</h3>
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-[var(--color-text)]">Trip Details</h3>
+                  <p className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest font-bold">The Core Essence</p>
+                </div>
               </div>
 
               {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-r-lg">
-                  <p className="text-red-700 text-sm font-medium">{error}</p>
+                <div className="bg-red-500/10 border border-red-500/20 p-6 mb-10 rounded-2xl flex items-center gap-4 text-red-400">
+                  <Info size={20} />
+                  <p className="text-sm font-bold">{error}</p>
                 </div>
               )}
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Trip Name</label>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Trip Name</label>
                   <div className="relative group">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
+                    <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
                     <input 
                       type="text" 
                       required 
-                      className="input-field pl-12 py-4" 
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-14 py-5 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all text-lg" 
                       placeholder="e.g. Kyoto Cherry Blossom Tour"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -133,10 +137,10 @@ export default function CreateTripPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Short Description</label>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Short Description</label>
                   <textarea 
-                    rows={4}
-                    className="input-field py-4" 
+                    rows={5}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl p-6 text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all resize-none" 
                     placeholder="What are you hoping to experience on this journey?"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -145,34 +149,37 @@ export default function CreateTripPage() {
               </div>
             </section>
 
-            <section className="card shadow-2xl border-none">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-[var(--color-accent-soft)] text-[var(--color-accent)] rounded-xl">
-                  <Calendar size={20} />
+            <section className="card p-10 bg-[var(--color-surface)] border-[var(--color-border)] shadow-2xl">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="p-3 bg-[var(--color-accent-soft)] text-[var(--color-accent)] rounded-2xl">
+                  <Calendar size={24} />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-[var(--color-secondary)]">Timing & Budget</h3>
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-[var(--color-text)]">Timing & Budget</h3>
+                  <p className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest font-bold">Logistics & Limits</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-8">
+                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Start Date</label>
+                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Start Date</label>
                       <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
                         placeholderText="Select start"
-                        className="input-field w-full"
+                        className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)]"
                         dateFormat="MMM d, yyyy"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">End Date</label>
+                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">End Date</label>
                       <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
                         placeholderText="Select end"
-                        className="input-field w-full"
+                        className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)]"
                         minDate={startDate || undefined}
                         dateFormat="MMM d, yyyy"
                       />
@@ -180,14 +187,14 @@ export default function CreateTripPage() {
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Total Budget ($)</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Total Budget ($)</label>
                     <div className="relative group">
-                      <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
+                      <DollarSign className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
                       <input 
                         type="number" 
-                        className="input-field pl-12 py-4" 
+                        className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-14 py-5 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all text-lg" 
                         placeholder="5000"
                         value={budget}
                         onChange={(e) => setBudget(e.target.value)}
@@ -200,23 +207,25 @@ export default function CreateTripPage() {
           </div>
 
           {/* Right - Preview & Visibility */}
-          <div className="space-y-8">
-            <section className="card shadow-2xl border-none bg-[var(--color-surface)]">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[var(--color-accent-soft)] text-[var(--color-accent)] rounded-xl">
-                  <Camera size={20} />
+          <div className="space-y-10">
+            <section className="card p-10 bg-[var(--color-surface)] border-[var(--color-border)] shadow-2xl">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-2xl">
+                  <Camera size={24} />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-[var(--color-text)]">Visual Context</h3>
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-[var(--color-text)]">Visual Context</h3>
+                </div>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Cover Photo URL</label>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Cover Photo URL</label>
                   <div className="relative group">
-                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
+                    <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors" size={20} />
                     <input 
                       type="url" 
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-12 py-4 text-[var(--color-text)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)] transition-all" 
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-14 py-5 text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all" 
                       placeholder="Paste Unsplash URL here..."
                       value={coverUrl}
                       onChange={(e) => {
@@ -227,47 +236,38 @@ export default function CreateTripPage() {
                   </div>
                 </div>
 
-                <div className="aspect-video w-full rounded-2xl bg-[var(--color-bg)] border border-[var(--color-border)] overflow-hidden relative">
+                <div className="aspect-video w-full rounded-3xl bg-[var(--color-bg)] border border-[var(--color-border)] overflow-hidden relative shadow-inner">
                   {coverUrl && !imgError ? (
                     <img 
                       src={coverUrl} 
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-cover animate-in fade-in duration-700" 
                       alt="Preview" 
                       onError={() => setImgError(true)}
                     />
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white/20 p-6 text-center">
-                      {imgError ? (
-                        <>
-                          <Info size={48} className="mb-2 text-[var(--color-danger)] opacity-50" />
-                          <p className="text-xs uppercase font-bold tracking-widest text-[var(--color-danger)] opacity-50">Invalid Image URL</p>
-                        </>
-                      ) : (
-                        <>
-                          <ImageIcon size={48} className="mb-2" />
-                          <p className="text-xs uppercase font-bold tracking-widest">Image Preview</p>
-                        </>
-                      )}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--color-text-muted)] opacity-30 p-6 text-center">
+                      <ImageIcon size={64} strokeWidth={1} className="mb-4" />
+                      <p className="text-[10px] uppercase font-black tracking-widest">Image Preview</p>
                     </div>
                   )}
                 </div>
               </div>
             </section>
 
-            <section className="card shadow-2xl border-none">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-xl">
-                  <Globe size={20} />
+            <section className="card p-10 bg-[var(--color-surface)] border-[var(--color-border)] shadow-2xl">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 bg-[var(--color-accent-soft)] text-[var(--color-accent)] rounded-2xl">
+                  <Globe size={24} />
                 </div>
-                <h3 className="font-display text-2xl font-bold text-[var(--color-secondary)]">Visibility</h3>
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-[var(--color-text)]">Visibility</h3>
+                </div>
               </div>
 
               <div className="flex items-center justify-between p-6 bg-[var(--color-bg)] rounded-3xl border border-[var(--color-border)]">
-                <div className="flex items-start gap-3">
-                  <div>
-                    <h4 className="font-bold text-[var(--color-secondary)] mb-1">Public Trip</h4>
-                    <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">Allow others to view and be inspired by your path.</p>
-                  </div>
+                <div>
+                  <h4 className="font-bold text-[var(--color-text)]">Public Trip</h4>
+                  <p className="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-widest mt-1">Shared Path</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input 
@@ -276,7 +276,7 @@ export default function CreateTripPage() {
                     checked={isPublic}
                     onChange={() => setIsPublic(!isPublic)}
                   />
-                  <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
+                  <div className="w-14 h-8 bg-[var(--color-surface)] border border-[var(--color-border)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white/20 after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
                 </label>
               </div>
 
@@ -284,20 +284,17 @@ export default function CreateTripPage() {
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full btn-primary py-5 text-xl flex items-center justify-center gap-3 group"
+                  className="w-full btn-primary py-6 text-xl flex items-center justify-center gap-4 group shadow-[0_0_30px_rgba(212,168,67,0.2)] hover:shadow-[0_0_40px_rgba(212,168,67,0.4)] transition-all"
                 >
                   {loading ? (
-                    <Loader2 className="animate-spin" size={24} />
+                    <Loader2 className="animate-spin" size={28} />
                   ) : (
                     <>
-                      <Plus className="group-hover:rotate-90 transition-transform duration-300" size={24} />
-                      Create Trip
+                      <Plus className="group-hover:rotate-90 transition-transform duration-500" size={28} strokeWidth={3} />
+                      <span className="font-black uppercase tracking-[0.2em] text-sm">Initiate Journey</span>
                     </>
                   )}
                 </button>
-                <div className="flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest">
-                  <Eye size={12} /> Live planning begins next
-                </div>
               </div>
             </section>
           </div>

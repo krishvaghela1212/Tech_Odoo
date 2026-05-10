@@ -19,12 +19,13 @@ import PackingChecklistPage from './pages/PackingChecklistPage'
 import TripNotesPage from './pages/TripNotesPage'
 import ProfilePage from './pages/ProfilePage'
 import PublicItineraryPage from './pages/PublicItineraryPage'
+import AdminDashboard from './pages/AdminDashboard'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[var(--color-bg)]">
+        <div className="min-h-screen bg-[var(--color-bg)] pt-28 md:pt-32">
           <Navbar />
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -44,6 +45,7 @@ export default function App() {
                 <Route path="/trips/:tripId/checklist" element={<PackingChecklistPage />} />
                 <Route path="/trips/:tripId/notes" element={<TripNotesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/admin" element={<AdminDashboard />} />
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />

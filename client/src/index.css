@@ -2,23 +2,41 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0D1F2D;
-  --color-surface: #1A3A4A;
-  --color-surface-alt: #122836;
-  --color-primary: #E8B86D;
-  --color-primary-dark: #D4A358;
-  --color-primary-soft: rgba(232, 184, 109, 0.1);
-  --color-secondary: #4ECDC4;
-  --color-accent: #4ECDC4;
-  --color-accent-soft: rgba(78, 205, 196, 0.1);
-  --color-text: #F2E8D5;
-  --color-text-muted: #7A8D99;
-  --color-border: #2A4A5A;
-  --color-danger: #FF6B6B;
-  --color-success: #4ECDC4;
-
   --font-display: 'Playfair Display', serif;
   --font-body: 'Outfit', sans-serif;
+
+  /* LIGHT THEME (Default) */
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+  --color-primary: #D4A843;
+  --color-primary-dark: #B38E37;
+  --color-primary-soft: rgba(212, 168, 67, 0.12);
+  --color-secondary: #1E293B;
+  --color-accent: #C4571A;
+  --color-accent-soft: rgba(196, 87, 26, 0.12);
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+}
+
+.dark {
+  /* DARK THEME (Midnight Atlas) */
+  --color-bg: #0A0F14;
+  --color-surface: #121921;
+  --color-surface-alt: #1A222B;
+  --color-border: #1E293B;
+  --color-text: #F8FAFC;
+  --color-text-muted: #94A3B8;
+  --color-primary: #D4A843;
+  --color-primary-dark: #B38E37;
+  --color-primary-soft: rgba(212, 168, 67, 0.08);
+  --color-secondary: #F8FAFC;
+  --color-accent: #2DD4BF;
+  --color-accent-soft: rgba(45, 212, 191, 0.12);
 }
 
 @layer base {

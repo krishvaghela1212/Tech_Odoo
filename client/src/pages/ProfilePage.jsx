@@ -96,7 +96,7 @@ export default function ProfilePage() {
         {/* Left Sidebar - Profile Summary */}
         <aside className="md:w-1/3">
           <div className="sticky top-24 space-y-6">
-            <div className="card text-center p-10 bg-white border-[var(--color-border)] shadow-xl relative overflow-hidden">
+            <div className="card text-center p-10 bg-[var(--color-surface)] border-[var(--color-border)] shadow-2xl relative overflow-hidden">
                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-24 bg-[var(--color-bg)] -z-0"></div>
                
                <div className="relative z-10">
@@ -132,7 +132,7 @@ export default function ProfilePage() {
 
             <button 
               onClick={() => signOut().then(() => navigate('/'))}
-              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl bg-white border border-[var(--color-border)] text-[var(--color-text-muted)] font-bold hover:text-[var(--color-danger)] hover:border-[var(--color-danger)] transition-all group"
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] font-bold hover:text-[var(--color-danger)] hover:border-[var(--color-danger)] transition-all group"
             >
               <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" /> Sign Out
             </button>

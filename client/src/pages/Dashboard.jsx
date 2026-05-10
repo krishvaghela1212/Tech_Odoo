@@ -3,11 +3,23 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { motion } from 'motion/react'
-import { Plus, Compass, ArrowRight, Loader2, Map as MapIcon, Globe } from 'lucide-react'
+import { 
+  Plus, 
+  Compass, 
+  ArrowRight, 
+  Loader2, 
+  Map as MapIcon, 
+  Globe, 
+  Sun, 
+  Moon, 
+  Sparkles 
+} from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
 import TripCard from '../components/TripCard'
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -17,21 +29,33 @@ export default function Dashboard() {
 
   const fetchRecentTrips = async () => {
     setLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('trips')
-        .select('*, stops(id)') // Using count logic in component
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(5)
-      
-      if (error) throw error
-      setTrips(data || [])
-    } catch (err) {
-      console.error('Error fetching trips:', err)
-    } finally {
+    // STATIC MODE: Mock trips
+    const mockTrips = [
+      {
+        id: '1',
+        name: 'Grand European Tour',
+        description: 'Exploring the historical heart of Europe from Paris to Rome.',
+        cover_photo_url: 'https://images.unsplash.com/photo-1491557348673-3c9f481191d7?w=800&q=60',
+        start_date: '2025-06-15',
+        end_date: '2025-06-30',
+        total_budget: 4500,
+        stops: [1, 2, 3]
+      },
+      {
+        id: '2',
+        name: 'Sakura Expedition',
+        description: 'Chasing the cherry blossoms across the Japanese islands.',
+        cover_photo_url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=60',
+        start_date: '2025-04-10',
+        end_date: '2025-04-20',
+        total_budget: 3200,
+        stops: [1, 2]
+      }
+    ]
+    setTimeout(() => {
+      setTrips(mockTrips)
       setLoading(false)
-    }
+    }, 500)
   }
 
   const suggestions = [
@@ -62,7 +86,7 @@ export default function Dashboard() {
             </p>
           </div>
           <Link 
-            to="/create-trip" 
+            to="/trips/new" 
             className="bg-[var(--color-bg)] text-[var(--color-primary)] px-8 py-4 rounded-xl font-body font-bold flex items-center gap-2 hover:bg-[var(--color-surface)] transition-all shadow-lg active:scale-95 border border-[var(--color-primary)]/20"
           >
             <Plus size={20} />
@@ -117,7 +141,9 @@ export default function Dashboard() {
           <div className="h-1 w-12 bg-[var(--color-accent)] mt-2 rounded-full"></div>
         </div>
 
+        {/* Quick Actions & Suggestions */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
           {suggestions.map((city, i) => (
             <motion.div 
               key={i}

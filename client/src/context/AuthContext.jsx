@@ -12,23 +12,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Initial check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
+    // STATIC MODE: Set a mock admin user for workflow testing
+    setUser({
+      id: 'mock-user-123',
+      email: 'voyager@traveloop.com',
+      full_name: 'Krish Vaghela',
+      role: 'admin',
+      user_metadata: { full_name: 'Krish Vaghela' }
     })
-
-    // Listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
+    setLoading(false)
   }, [])
 
   const signOut = async () => {
     await supabase.auth.signOut()
+    setUser(null)
   }
 
   return (

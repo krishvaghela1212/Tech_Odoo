@@ -41,17 +41,18 @@ export default function BudgetPage() {
 
   const fetchBudgetData = async () => {
     setLoading(true)
-    try {
-      const { data: trip } = await supabase.from('trips').select('total_budget').eq('id', tripId).single()
-      const { data: items } = await supabase.from('budget_items').select('*').eq('trip_id', tripId)
-      
-      setTotalBudget(trip.total_budget || 0)
-      setBudgetItems(items || [])
-    } catch (err) {
-      console.error(err)
-    } finally {
+    // STATIC MODE: Mock budget data
+    setTimeout(() => {
+      setTotalBudget(4500)
+      setBudgetItems([
+        { id: '1', category: 'Transport', label: 'Round-trip Flights', amount: 1200 },
+        { id: '2', category: 'Stay', label: 'Luxury Airbnb Paris', amount: 1500 },
+        { id: '3', category: 'Activities', label: 'Eiffel Tower Tour', amount: 85 },
+        { id: '4', category: 'Meals', label: 'Dining Allowance', amount: 800 },
+        { id: '5', category: 'Misc', label: 'Shopping & Gifts', amount: 300 },
+      ])
       setLoading(false)
-    }
+    }, 500)
   }
 
   const handleAddItem = async (e) => {

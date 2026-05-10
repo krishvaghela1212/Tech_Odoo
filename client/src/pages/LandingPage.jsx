@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
+import Navbar from '../components/Navbar'
 import { 
   MapPin, 
   Calendar, 
@@ -18,8 +19,11 @@ import {
 } from 'lucide-react'
 
 export default function LandingPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="overflow-x-hidden font-body bg-[var(--color-bg)]">
+      <Navbar />
       {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden">
         {/* Background Image with Layered Overlays */}
@@ -41,19 +45,49 @@ export default function LandingPage() {
             className="w-full h-full object-cover opacity-30 grayscale-[0.4]"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg)]/80 to-[var(--color-bg)]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg)]/80 to-[var(--color-bg)]"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-bg)] via-transparent to-[var(--color-bg)]/20"></div>
         </div>
         
         <div className="container mx-auto px-6 relative z-10 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="max-w-7xl mx-auto"
           >
-            <span className="badge-accent badge py-1 text-sm mb-6 shadow-sm border border-[var(--color-accent)]/20">Your multi-city compass</span>
-            <h1 className="font-display leading-[0.8] mb-8">
-              <span className="block text-[var(--color-secondary)] italic text-6xl md:text-8xl lg:text-[10rem]">Plan Less.</span>
-              <span className="block text-[var(--color-primary)] font-bold text-6xl md:text-8xl lg:text-[10rem] mt-4">Wander More.</span>
+            <h1 className="font-display leading-[0.85] mb-8 select-none">
+              <div className="flex flex-wrap justify-center mb-4">
+                {"Plan Less.".split("").map((char, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ 
+                      duration: 0.3, 
+                      delay: i * 0.08, 
+                      ease: "easeOut"
+                    }}
+                    className="inline-block text-[var(--color-secondary)] italic text-6xl md:text-8xl lg:text-[10rem]"
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </div>
+              <div className="flex flex-wrap justify-center">
+                {"Wander More.".split("").map((char, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ 
+                      duration: 0.3, 
+                      delay: 0.8 + i * 0.08, 
+                      ease: "easeOut"
+                    }}
+                    className="inline-block text-[var(--color-primary)] font-bold text-6xl md:text-8xl lg:text-[10rem] drop-shadow-[0_0_30px_rgba(212,168,67,0.3)]"
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </div>
             </h1>
           </motion.div>
           
@@ -78,7 +112,7 @@ export default function LandingPage() {
             </Link>
             <button 
               onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-12 py-5 rounded-xl border-2 border-[var(--color-border)] text-[var(--color-secondary)] font-bold hover:bg-[var(--color-surface-alt)] transition-all bg-white/50 backdrop-blur-sm shadow-xl"
+              className="px-12 py-5 rounded-xl border-2 border-[var(--color-border)] text-[var(--color-secondary)] font-bold hover:bg-[var(--color-surface-alt)] transition-all bg-[var(--color-surface)]/50 backdrop-blur-sm shadow-xl"
             >
               See How It Works
             </button>
@@ -178,16 +212,16 @@ export default function LandingPage() {
       </section>
 
       {/* Quote Banner */}
-      <section className="bg-[var(--color-secondary)] py-32 px-6 relative">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+      <section className="bg-[var(--color-surface)] py-32 px-6 relative border-y border-[var(--color-border)]">
+        <div className="absolute inset-0 opacity-[0.03] grayscale bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <p className="font-display italic text-4xl md:text-6xl text-white leading-tight font-bold">
+          <p className="font-display italic text-4xl md:text-6xl text-[var(--color-secondary)] leading-tight font-black drop-shadow-sm">
             "The world is a book; travel is the reading."
           </p>
-          <div className="flex items-center justify-center gap-4 mt-12 text-[var(--color-accent)]">
-            <div className="w-12 h-px bg-[var(--color-accent)]/30"></div>
-            <p className="font-bold text-lg tracking-[0.3em] uppercase">Saint Augustine</p>
-            <div className="w-12 h-px bg-[var(--color-accent)]/30"></div>
+          <div className="flex items-center justify-center gap-4 mt-12 text-[var(--color-primary)]">
+            <div className="w-12 h-px bg-[var(--color-primary)]/30"></div>
+            <p className="font-bold text-lg tracking-[0.3em] uppercase tracking-tighter">Saint Augustine</p>
+            <div className="w-12 h-px bg-[var(--color-primary)]/30"></div>
           </div>
         </div>
       </section>
