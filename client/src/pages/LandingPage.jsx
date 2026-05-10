@@ -94,7 +94,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-[var(--color-text-muted)] text-lg md:text-2xl max-w-2xl mx-auto mt-12 font-light leading-relaxed"
+            className="text-[var(--color-text-muted)] text-base md:text-lg max-w-2xl mx-auto mt-12 font-light leading-relaxed"
           >
             Traveloop turns complex itineraries into a beautifully organized journey. 
             All your stops, activities, and budgets in one perfect loop.
