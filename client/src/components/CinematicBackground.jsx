@@ -34,12 +34,12 @@ export default function CinematicBackground() {
       {/* Background Topo Map Layer */}
       <motion.div 
         style={{ x: moveX1, y: moveY1, scale: 1.15 }}
-        className="absolute inset-0 opacity-[0.12] grayscale contrast-150 brightness-75"
+        className="absolute inset-0 opacity-[0.25] dark:opacity-[0.15] grayscale contrast-150 brightness-75"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/world-map.png')] bg-center bg-no-repeat bg-cover"></div>
       </motion.div>
 
-      {/* Floating Travel Elements (The "Project Relation") */}
+      {/* Floating Travel Elements */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         {[...Array(12)].map((_, i) => {
           const Icon = travelIcons[i % travelIcons.length]
@@ -54,7 +54,7 @@ export default function CinematicBackground() {
               }}
               animate={{
                 y: [null, "-=60", "+=60"],
-                opacity: [0, 0.25, 0],
+                opacity: [0, 0.4, 0],
                 rotate: [0, 15, -15, 0]
               }}
               style={{
@@ -66,9 +66,9 @@ export default function CinematicBackground() {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="absolute text-[var(--color-primary)]/40 filter blur-[0.5px]"
+              className="absolute text-[var(--color-primary)]/60 filter blur-[0.2px]"
             >
-              <Icon size={Math.random() * 40 + 20} strokeWidth={1} />
+              <Icon size={Math.random() * 50 + 30} strokeWidth={1} />
             </motion.div>
           )
         })}
@@ -77,17 +77,16 @@ export default function CinematicBackground() {
       {/* Glowing Flight Path "Loops" */}
       <motion.svg 
         style={{ x: moveX2, y: moveY2, rotateX, rotateY }}
-        className="absolute inset-0 w-full h-full opacity-[0.05]"
+        className="absolute inset-0 w-full h-full opacity-[0.08]"
       >
         <circle cx="20%" cy="30%" r="200" fill="none" stroke="var(--color-primary)" strokeWidth="1" strokeDasharray="10 20" />
         <circle cx="80%" cy="70%" r="300" fill="none" stroke="var(--color-primary)" strokeWidth="1" strokeDasharray="15 30" />
-        <path d="M 100 100 Q 400 600 800 200" fill="none" stroke="var(--color-primary)" strokeWidth="1" strokeDasharray="5 15" />
       </motion.svg>
 
       {/* 3D Navigation Grid */}
       <motion.div 
         style={{ x: moveX2, y: moveY2, rotateX, rotateY, scale: 1.25 }}
-        className="absolute inset-0 opacity-[0.06]"
+        className="absolute inset-0 opacity-[0.1] dark:opacity-[0.08]"
       >
         <div className="w-full h-full" style={{ 
           backgroundImage: 'linear-gradient(var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)',
@@ -96,8 +95,8 @@ export default function CinematicBackground() {
       </motion.div>
 
       {/* Cinematic Depth Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-[var(--color-bg)] opacity-80"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--color-bg)_110%)] opacity-70"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-[var(--color-bg)] opacity-60"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--color-bg)_120%)] opacity-50"></div>
     </div>
   )
 }

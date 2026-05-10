@@ -271,7 +271,7 @@ export default function AdminDashboard() {
               { label: 'Supabase API Response', status: 'Healthy', time: '142ms', color: 'text-green-500' },
               { label: 'Storage Utilization', status: 'Optimal', time: '2.4 GB / 10 GB', color: 'text-blue-500' },
               { label: 'Email Service', status: 'Operational', time: '99.9% Uptime', color: 'text-green-500' },
-              { label: 'Claude AI Processing', status: 'Active', time: 'Average 1.2s', color: 'text-purple-500' },
+              { label: 'Smart Query Processing', status: 'Active', time: 'Average 1.2s', color: 'text-purple-500' },
             ].map((s, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">

@@ -90,11 +90,36 @@ export default function PackingChecklistPage() {
     }
   }
 
-  const togglePacked = async (item) => {
+  const togglePacked = (item) => {
+    // Optimistic Update
+    const originalItems = [...items]
+    const newPackedStatus = !item.is_packed
+    
+    setItems(items.map(i => i.id === item.id ? { ...i, is_packed: newPackedStatus } : i))
+
+    supabase.from('checklist_items')
+      .update({ is_packed: newPackedStatus })
+      .eq('id', item.id)
+      .then(({ error }) => {
+        if (error) {
+          console.error(error)
+          setItems(originalItems) // Rollback on error
+        }
+      })
+  }
+
+  const addSmartItem = async (label, category) => {
+    if (items.some(i => i.label.toLowerCase() === label.toLowerCase())) return
+    
     try {
-      const { error } = await supabase.from('checklist_items').update({ is_packed: !item.is_packed }).eq('id', item.id)
+      const { data, error } = await supabase.from('checklist_items').insert([{
+        trip_id: tripId,
+        label: label,
+        category: category
+      }]).select().single()
+      
       if (error) throw error
-      setItems(items.map(i => i.id === item.id ? { ...i, is_packed: !item.is_packed } : i))
+      setItems(prev => [...prev, data])
     } catch (err) {
       console.error(err)
     }
@@ -219,6 +244,29 @@ export default function PackingChecklistPage() {
                   {isAdding ? <Loader2 className="animate-spin" /> : <><Plus size={20} /> Add to List</>}
                 </button>
               </form>
+
+              {/* Smart Suggestions Chips */}
+              <div className="mt-10 pt-8 border-t border-[var(--color-border)]">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-4">Smart Essentials</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { l: 'Passport', c: 'Documents' },
+                    { l: 'Universal Adapter', c: 'Electronics' },
+                    { l: 'Sunscreen', c: 'Toiletries' },
+                    { l: 'First Aid Kit', c: 'Misc' },
+                    { l: 'Power Bank', c: 'Electronics' },
+                    { l: 'Insurance Policy', c: 'Documents' }
+                  ].map((s, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => addSmartItem(s.l, s.c)}
+                      className="text-[10px] font-bold px-3 py-1.5 rounded-lg border border-[var(--color-primary)]/30 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-bg)] transition-all active:scale-95"
+                    >
+                      + {s.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="hidden lg:block p-8 bg-[var(--color-secondary)] text-[var(--color-bg)] rounded-[2.5rem] overflow-hidden relative shadow-2xl group">

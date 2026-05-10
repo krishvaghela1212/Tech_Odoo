@@ -10,7 +10,7 @@ export default function TripCard({ trip }) {
   return (
     <motion.div 
       whileHover={{ y: -5, scale: 1.02 }}
-      className="card flex flex-col p-0 overflow-hidden group border border-[var(--color-border)] shadow-sm hover:shadow-xl transition-all duration-300 h-full"
+      className="card glass flex flex-col p-0 overflow-hidden group border border-[var(--color-border)] shadow-sm hover:shadow-xl transition-all duration-300 h-full"
     >
       <Link to={`/trips/${trip.id}/view`} className="relative h-48 overflow-hidden block">
         <img 
