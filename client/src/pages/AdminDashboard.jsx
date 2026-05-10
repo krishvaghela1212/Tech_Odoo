@@ -42,43 +42,64 @@ export default function AdminDashboard() {
 
   const fetchAdminData = async () => {
     setLoading(true)
-    // STATIC MODE: Mock platform-wide stats
-    setTimeout(() => {
+    try {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      const { data: trips } = await supabase
+        .from('trips')
+        .select('id, created_at')
+
+      const { data: stops } = await supabase
+        .from('stops')
+        .select('city_name')
+
       setStats({
-        totalUsers: 124,
-        totalTrips: 342,
-        totalCities: 156,
-        activeToday: 48
+        totalUsers: profiles?.length || 0,
+        totalTrips: trips?.length || 0,
+        totalCities: new Set(stops?.map(s => s.city_name)).size || 0,
+        activeToday: trips?.filter(t => {
+          const today = new Date().toDateString()
+          return new Date(t.created_at).toDateString() === today
+        }).length || 0
       })
 
-      setUsers([
-        { id: '1', full_name: 'Elena Wanderlust', email: 'elena@example.com', role: 'user', updated_at: new Date().toISOString() },
-        { id: '2', full_name: 'Marco Polo', email: 'marco@voyager.com', role: 'user', updated_at: new Date().toISOString() },
-        { id: '3', full_name: 'Admin Krish', email: 'admin@traveloop.com', role: 'admin', updated_at: new Date().toISOString() },
-        { id: '4', full_name: 'Sarah Explorer', email: 'sarah@trips.com', role: 'user', updated_at: new Date().toISOString() },
-        { id: '5', full_name: 'James Cook', email: 'james@ocean.com', role: 'user', updated_at: new Date().toISOString() },
+      setUsers(profiles || [])
+
+      const cityCount = {}
+      stops?.forEach(s => {
+        cityCount[s.city_name] = (cityCount[s.city_name] || 0) + 1
+      })
+      const sortedCities = Object.entries(cityCount)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5)
+      setTopCities(sortedCities.length > 0 ? sortedCities : [
+        { name: 'Paris', count: 0 },
+        { name: 'Tokyo', count: 0 },
+        { name: 'Bali', count: 0 }
       ])
 
-      setTopCities([
-        { name: 'Paris', count: 42 },
-        { name: 'Tokyo', count: 38 },
-        { name: 'Rome', count: 25 },
-        { name: 'New York', count: 18 },
-        { name: 'London', count: 15 },
-      ])
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date()
+        d.setDate(d.getDate() - (6 - i))
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' })
+        const dateStr = d.toDateString()
+        return {
+          name: dayName,
+          trips: trips?.filter(t => new Date(t.created_at).toDateString() === dateStr).length || 0,
+          users: profiles?.filter(p => new Date(p.created_at).toDateString() === dateStr).length || 0
+        }
+      })
+      setChartData(last7Days)
 
-      setChartData([
-        { name: 'Mon', trips: 12, users: 5 },
-        { name: 'Tue', trips: 19, users: 8 },
-        { name: 'Wed', trips: 15, users: 12 },
-        { name: 'Thu', trips: 22, users: 15 },
-        { name: 'Fri', trips: 30, users: 18 },
-        { name: 'Sat', trips: 45, users: 25 },
-        { name: 'Sun', trips: 38, users: 22 },
-      ])
-
+    } catch (err) {
+      console.error('Admin fetch error:', err)
+    } finally {
       setLoading(false)
-    }, 500)
+    }
   }
 
   if (loading) {
@@ -228,13 +249,13 @@ export default function AdminDashboard() {
                   <div>
                     <div className="font-bold text-[var(--color-secondary)]">{u.full_name || 'Anonymous Voyager'}</div>
                     <div className="text-xs text-[var(--color-text-muted)] flex items-center gap-1">
-                      <Calendar size={12} /> Joined {new Date(u.updated_at).toLocaleDateString()}
+                      <Calendar size={12} /> Joined {new Date(u.created_at || u.updated_at).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${u.role === 'admin' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'}`}>
-                    {u.role}
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-gray-100 text-gray-600">
+                    user
                   </span>
                   <ChevronRight size={18} className="text-[var(--color-border)]" />
                 </div>
@@ -250,7 +271,7 @@ export default function AdminDashboard() {
               { label: 'Supabase API Response', status: 'Healthy', time: '142ms', color: 'text-green-500' },
               { label: 'Storage Utilization', status: 'Optimal', time: '2.4 GB / 10 GB', color: 'text-blue-500' },
               { label: 'Email Service', status: 'Operational', time: '99.9% Uptime', color: 'text-green-500' },
-              { label: 'Gemini AI Processing', status: 'Active', time: 'Average 1.2s', color: 'text-purple-500' },
+              { label: 'Claude AI Processing', status: 'Active', time: 'Average 1.2s', color: 'text-purple-500' },
             ].map((s, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
