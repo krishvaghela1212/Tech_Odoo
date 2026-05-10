@@ -16,7 +16,31 @@ export default function MyTripsPage() {
 
   useEffect(() => {
     fetchTrips()
-  }, [])
+
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel('trips-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'trips',
+        filter: `user_id=eq.${user.id}`
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setTrips(prev => [...prev, payload.new])
+        }
+        if (payload.eventType === 'DELETE') {
+          setTrips(prev => prev.filter(i => i.id !== payload.old.id))
+        }
+        if (payload.eventType === 'UPDATE') {
+          setTrips(prev => prev.map(i => i.id === payload.new.id ? payload.new : i))
+        }
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [user?.id])
 
   const fetchTrips = async () => {
   setLoading(true)

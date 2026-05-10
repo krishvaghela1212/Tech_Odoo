@@ -29,6 +29,30 @@ export default function ItineraryBuilderPage() {
 
   useEffect(() => {
     if (tripId) fetchTripData()
+
+    if (!tripId) return
+
+    const channel = supabase
+      .channel('stops-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'stops',
+        filter: `trip_id=eq.${tripId}`
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setStops(prev => [...prev, payload.new])
+        }
+        if (payload.eventType === 'DELETE') {
+          setStops(prev => prev.filter(i => i.id !== payload.old.id))
+        }
+        if (payload.eventType === 'UPDATE') {
+          setStops(prev => prev.map(i => i.id === payload.new.id ? payload.new : i))
+        }
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
   }, [tripId])
 
   const fetchTripData = async () => {
