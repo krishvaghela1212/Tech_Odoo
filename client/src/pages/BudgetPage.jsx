@@ -318,3 +318,4 @@ export default function BudgetPage() {
     </div>
   )
 }
+// BudgetPage.jsx
