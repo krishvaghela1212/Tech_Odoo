@@ -36,42 +36,34 @@ export default function CreateTripPage() {
   const [error, setError] = useState(null)
 
   const handleCreate = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  e.preventDefault()
+  setLoading(true)
+  setError(null)
 
-    try {
-      // STATIC MODE: Just navigate to builder with a mock ID
-      setTimeout(() => {
-        navigate(`/trips/mock-trip-123/builder`)
-        setLoading(false)
-      }, 800)
-      
-      /* Supabase logic commented out for static test
-      const { data, error: insertError } = await supabase
-        .from('trips')
-        .insert([{ 
-          user_id: user?.id, 
-          name, 
-          description, 
-          start_date: startDate ? startDate.toISOString() : null, 
-          end_date: endDate ? endDate.toISOString() : null, 
-          cover_photo_url: coverUrl || null, 
-          total_budget: budget ? parseFloat(budget) : 0, 
-          is_public: isPublic 
-        }])
-        .select()
-        .single()
+  try {
+    const { data, error: insertError } = await supabase
+      .from('trips')
+      .insert([{
+        user_id: user?.id,
+        name,
+        description,
+        start_date: startDate ? startDate.toISOString().split('T')[0] : null,
+        end_date: endDate ? endDate.toISOString().split('T')[0] : null,
+        cover_photo_url: coverUrl || null,
+        total_budget: budget ? parseFloat(budget) : 0,
+        is_public: isPublic
+      }])
+      .select()
+      .single()
 
-      if (insertError) throw insertError
-      navigate(`/trips/${data.id}/builder`)
-      */
-    } catch (err) {
-      setError(err.message)
-      setLoading(false)
-    }
+    if (insertError) throw insertError
+    navigate(`/trips/${data.id}/builder`)
+  } catch (err) {
+    setError(err.message)
+  } finally {
+    setLoading(false)
   }
-
+}
   return (
     <div className="min-h-screen bg-[var(--color-bg)] pb-24 md:pb-32">
       {/* Dark Cinematic Header */}

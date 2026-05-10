@@ -19,20 +19,22 @@ export default function MyTripsPage() {
   }, [])
 
   const fetchTrips = async () => {
-    setLoading(true)
-    // STATIC MODE: Mock data for the full list
-    const mockTrips = [
-      { id: '1', name: 'Grand European Tour', description: 'Paris to Rome journey.', cover_photo_url: 'https://images.unsplash.com/photo-1491557348673-3c9f481191d7?w=800&q=60', start_date: '2025-06-15', end_date: '2025-06-30', total_budget: 4500, stops: [1,2,3], is_public: true },
-      { id: '2', name: 'Sakura Expedition', description: 'Japan cherry blossoms.', cover_photo_url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=60', start_date: '2025-04-10', end_date: '2025-04-20', total_budget: 3200, stops: [1,2], is_public: false },
-      { id: '3', name: 'Alpine Ski Week', description: 'Winter in the Swiss Alps.', cover_photo_url: 'https://images.unsplash.com/photo-1551882547-ff43c63957e4?w=800&q=60', start_date: '2025-01-12', end_date: '2025-01-19', total_budget: 2800, stops: [1], is_public: true },
-      { id: '4', name: 'Desert Mirage', description: 'Dubai and Abu Dhabi.', cover_photo_url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=60', start_date: '2025-11-05', end_date: '2025-11-12', total_budget: 5500, stops: [1,2], is_public: false },
-    ]
-    
-    setTimeout(() => {
-      setTrips(mockTrips)
-      setLoading(false)
-    }, 500)
+  setLoading(true)
+  try {
+    const { data, error } = await supabase
+      .from('trips')
+      .select(`*, stops(count)`)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    setTrips(data || [])
+  } catch (err) {
+    console.error('Error fetching trips:', err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const deleteTrip = async (tripId) => {
     try {

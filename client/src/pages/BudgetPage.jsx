@@ -41,35 +41,49 @@ export default function BudgetPage() {
 
   const fetchBudgetData = async () => {
     setLoading(true)
-    // STATIC MODE: Mock budget data
-    setTimeout(() => {
-      setTotalBudget(4500)
-      setBudgetItems([
-        { id: '1', category: 'Transport', label: 'Round-trip Flights', amount: 1200 },
-        { id: '2', category: 'Stay', label: 'Luxury Airbnb Paris', amount: 1500 },
-        { id: '3', category: 'Activities', label: 'Eiffel Tower Tour', amount: 85 },
-        { id: '4', category: 'Meals', label: 'Dining Allowance', amount: 800 },
-        { id: '5', category: 'Misc', label: 'Shopping & Gifts', amount: 300 },
-      ])
+    try {
+      const { data: tripData, error: tripError } = await supabase
+        .from('trips')
+        .select('total_budget')
+        .eq('id', tripId)
+        .single()
+      if (tripError) throw tripError
+      setTotalBudget(tripData.total_budget || 0)
+
+      const { data: stopsData, error: stopsError } = await supabase
+        .from('stops')
+        .select(`activities(name, category, cost)`)
+        .eq('trip_id', tripId)
+      if (stopsError) throw stopsError
+
+      const allActivities = stopsData.flatMap((stop, stopIndex) =>
+        (stop.activities || []).map((act, actIndex) => ({
+          id: `${stopIndex}-${actIndex}`,
+          category: act.category || 'Misc',
+          label: act.name,
+          amount: act.cost || 0
+        }))
+      )
+      setBudgetItems(allActivities)
+    } catch (err) {
+      console.error(err)
+    } finally {
       setLoading(false)
-    }, 500)
+    }
   }
 
   const handleAddItem = async (e) => {
     e.preventDefault()
     if (!newLabel || !newAmount) return
-    
     setIsAdding(true)
     try {
-      const { data, error } = await supabase.from('budget_items').insert([{
-        trip_id: tripId,
+      const newItem = {
+        id: Date.now().toString(),
         category: newCategory,
         label: newLabel,
         amount: parseFloat(newAmount)
-      }]).select().single()
-      
-      if (error) throw error
-      setBudgetItems([...budgetItems, data])
+      }
+      setBudgetItems([...budgetItems, newItem])
       setNewLabel('')
       setNewAmount('')
     } catch (err) {
@@ -79,13 +93,8 @@ export default function BudgetPage() {
     }
   }
 
-  const deleteItem = async (id) => {
-    try {
-      await supabase.from('budget_items').delete().eq('id', id)
-      setBudgetItems(budgetItems.filter(item => item.id !== id))
-    } catch (err) {
-      console.error(err)
-    }
+  const deleteItem = (id) => {
+    setBudgetItems(budgetItems.filter(item => item.id !== id))
   }
 
   const totalSpent = budgetItems.reduce((sum, item) => sum + parseFloat(item.amount), 0)

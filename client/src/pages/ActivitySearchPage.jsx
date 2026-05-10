@@ -71,10 +71,8 @@ export default function ActivitySearchPage() {
         stop_id: stopId,
         name: selectedActivity.name,
         description: selectedActivity.desc,
-        activity_type: selectedActivity.type,
-        estimated_cost: cost ? parseFloat(cost) : selectedActivity.cost,
-        duration_minutes: selectedActivity.duration,
-        scheduled_date: date,
+        category: selectedActivity.type,
+        cost: cost ? parseFloat(cost) : selectedActivity.cost,
         scheduled_time: time
       }])
       

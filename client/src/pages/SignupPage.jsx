@@ -34,6 +34,14 @@ export default function SignupPage() {
         }
       })
       if (error) throw error
+
+      if (data.user) {
+        await supabase.from('profiles').upsert({
+        id: 
+        data.user.id,
+        full_name: fullName,
+  })
+}
       
       if (data.user && !data.session) {
         setError('Signup successful! Please check your email for a confirmation link before logging in.')

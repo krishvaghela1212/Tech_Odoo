@@ -28,35 +28,23 @@ export default function Dashboard() {
   }, [])
 
   const fetchRecentTrips = async () => {
-    setLoading(true)
-    // STATIC MODE: Mock trips
-    const mockTrips = [
-      {
-        id: '1',
-        name: 'Grand European Tour',
-        description: 'Exploring the historical heart of Europe from Paris to Rome.',
-        cover_photo_url: 'https://images.unsplash.com/photo-1491557348673-3c9f481191d7?w=800&q=60',
-        start_date: '2025-06-15',
-        end_date: '2025-06-30',
-        total_budget: 4500,
-        stops: [1, 2, 3]
-      },
-      {
-        id: '2',
-        name: 'Sakura Expedition',
-        description: 'Chasing the cherry blossoms across the Japanese islands.',
-        cover_photo_url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=60',
-        start_date: '2025-04-10',
-        end_date: '2025-04-20',
-        total_budget: 3200,
-        stops: [1, 2]
-      }
-    ]
-    setTimeout(() => {
-      setTrips(mockTrips)
-      setLoading(false)
-    }, 500)
+  setLoading(true)
+  try {
+    const { data, error } = await supabase
+      .from('trips')
+      .select(`*, stops(count)`)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(3)
+
+    if (error) throw error
+    setTrips(data || [])
+  } catch (err) {
+    console.error('Error fetching trips:', err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const suggestions = [
     { name: 'Paris', country: 'France', img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&auto=format&fit=crop&q=60' },
@@ -186,7 +174,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-display font-bold text-[var(--color-accent)]">
-                  {trips.reduce((acc, trip) => acc + (trip.stops?.length || 0), 0)}
+                  {trips.reduce((acc, trip) => acc + (trip.stops?.[0]?.count || 0), 0)}
                 </div>
                 <div className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.2em] mt-2">Anchors</div>
               </div>

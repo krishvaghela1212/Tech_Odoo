@@ -54,7 +54,6 @@ export default function CitySearchPage() {
         trip_id: tripId,
         city_name: selectedCity.name,
         country: selectedCity.country,
-        cost_index: selectedCity.cost_index,
         start_date: startDate,
         end_date: endDate,
         order_index: nextIndex

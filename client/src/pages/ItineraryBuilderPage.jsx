@@ -228,7 +228,7 @@ export default function ItineraryBuilderPage() {
                 </Link>
               </div>
 
-              <ActivitiesList stopId={activeStop.id} />
+              <ActivitiesList stopId={activeStop.id} tripId={tripId} />
             </motion.div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center">
@@ -252,7 +252,7 @@ export default function ItineraryBuilderPage() {
   )
 }
 
-function ActivitiesList({ stopId }) {
+function ActivitiesList({ stopId, tripId }) {
   const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -266,7 +266,6 @@ function ActivitiesList({ stopId }) {
       .from('activities')
       .select('*')
       .eq('stop_id', stopId)
-      .order('scheduled_date', { ascending: true })
       .order('scheduled_time', { ascending: true })
     
     if (!error) setActivities(data || [])
@@ -314,8 +313,8 @@ function ActivitiesList({ stopId }) {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${getTypeColor(activity.activity_type)}`}>
-                      {activity.activity_type}
+                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${getTypeColor(activity.category)}`}>
+                      {activity.category}
                     </span>
                     <h4 className="font-body font-bold text-[var(--color-text)] underline-offset-4 group-hover:underline">{activity.name}</h4>
                   </div>
@@ -357,7 +356,7 @@ function ActivitiesList({ stopId }) {
           </div>
           <h4 className="font-display text-xl font-bold text-[var(--color-secondary)] mb-2">No activities planned</h4>
           <p className="text-[var(--color-text-muted)] mb-8">What would you like to do in this city?</p>
-          <Link to={`/trips/${stopId}/activities`} className="btn-outline px-10">Add Activity</Link>
+          <Link to={`/trips/${tripId}/stops/${stopId}/activities`} className="btn-outline px-10">Add Activity</Link>
         </div>
       )}
     </div>

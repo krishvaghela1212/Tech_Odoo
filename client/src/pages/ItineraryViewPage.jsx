@@ -32,65 +32,42 @@ export default function ItineraryViewPage() {
 
   const fetchTripData = async () => {
     setLoading(true)
-    // STATIC MODE: Full mock data with premium styling and images
-    setTimeout(() => {
-      setTrip({
-        id: tripId,
-        name: 'Grand European Tour',
-        start_date: '2025-06-15',
-        end_date: '2025-06-30',
-        total_budget: 4500,
-        description: 'A historical journey through the heart of Europe, exploring iconic landmarks and hidden gems.',
-        cover_photo_url: 'https://images.unsplash.com/photo-1471623322304-7e37996b0603?w=1600&q=80'
-      })
-
-      setStops([
-        { 
-          id: 's1', 
-          city_name: 'Paris', 
-          country: 'France', 
-          start_date: '2025-06-15', 
-          end_date: '2025-06-20',
-          image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=60',
-          activities: [
-            { id: 'a1', name: 'Eiffel Tower Sunset Visit', cost: 45, category: 'Sightseeing', scheduled_time: '18:30' },
-            { id: 'a2', name: 'Louvre Museum Tour', cost: 30, category: 'Culture', scheduled_time: '10:00' },
-            { id: 'a3', name: 'Seine River Dinner Cruise', cost: 120, category: 'Dining', scheduled_time: '20:00' }
-          ]
-        },
-        { 
-          id: 's2', 
-          city_name: 'Rome', 
-          country: 'Italy', 
-          start_date: '2025-06-21', 
-          end_date: '2025-06-26',
-          image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=60',
-          activities: [
-            { id: 'a4', name: 'Colosseum & Roman Forum', cost: 55, category: 'History', scheduled_time: '09:00' },
-            { id: 'a5', name: 'Vatican Museums', cost: 40, category: 'Culture', scheduled_time: '14:00' },
-            { id: 'a6', name: 'Trastevere Food Tour', cost: 75, category: 'Dining', scheduled_time: '19:00' }
-          ]
-        },
-        { 
-          id: 's3', 
-          city_name: 'Venice', 
-          country: 'Italy', 
-          start_date: '2025-06-27', 
-          end_date: '2025-06-30',
-          image: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=800&q=60',
-          activities: [
-            { id: 'a7', name: 'Grand Canal Gondola Ride', cost: 80, category: 'Adventure', scheduled_time: '17:00' },
-            { id: 'a8', name: 'St. Marks Basilica Visit', cost: 20, category: 'Culture', scheduled_time: '11:00' }
-          ]
-        }
-      ])
+    try {
+      const { data: tripData, error: tripError } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('id', tripId)
+        .single()
+      if (tripError) throw tripError
+      setTrip(tripData)
+      const { data: stopsData, error: stopsError } = await supabase
+        .from('stops')
+        .select(`*, activities(*)`)
+        .eq('trip_id', tripId)
+        .order('order_index', { ascending: true })
+      if (stopsError) throw stopsError
+      setStops(stopsData || [])
+    } catch (err) {
+      console.error('Error fetching trip:', err)
+    } finally {
       setLoading(false)
-    }, 500)
+    }
   }
 
   const totalCost = stops.reduce((acc, stop) => {
     return acc + (stop.activities?.reduce((sum, act) => sum + (act.cost || 0), 0) || 0)
   }, 0)
+
+  const CITY_IMAGES = {
+    'Paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=60',
+    'Rome': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=60',
+    'Barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&q=60',
+    'Tokyo': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=60',
+    'Bali': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=60',
+    'Dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=60',
+    'London': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=60',
+    'default': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=60'
+  }
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-[var(--color-bg)]">
@@ -199,7 +176,7 @@ export default function ItineraryViewPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                   <div className="relative rounded-[2rem] overflow-hidden shadow-2xl h-[350px] group-hover:scale-[1.02] transition-transform duration-500">
-                    <img src={stop.image} className="w-full h-full object-cover" alt={stop.city_name} />
+                    <img src={CITY_IMAGES[stop.city_name] || CITY_IMAGES['default']} className="w-full h-full object-cover" alt={stop.city_name} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
                       <div className="text-white">
@@ -248,7 +225,7 @@ export default function ItineraryViewPage() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center pb-6 border-b border-[var(--color-border)]">
                     <div className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Total Days</div>
-                    <div className="text-2xl font-display font-bold text-[var(--color-secondary)]">16</div>
+                    <div className="text-2xl font-display font-bold text-[var(--color-secondary)]">{trip?.start_date && trip?.end_date ? Math.ceil((new Date(trip.end_date) - new Date(trip.start_date)) / (1000 * 60 * 60 * 24)) : '—'}</div>
                   </div>
                   <div className="flex justify-between items-center pb-6 border-b border-[var(--color-border)]">
                     <div className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Est. Total Cost</div>
@@ -262,7 +239,15 @@ export default function ItineraryViewPage() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <button className="btn-primary w-full py-4 flex items-center justify-center gap-3 shadow-xl">
+                <button
+                  onClick={async () => {
+                    await supabase.from('trips').update({ is_public: true }).eq('id', tripId)
+                    const shareUrl = `${window.location.origin}/share/${trip.share_token}`
+                    navigator.clipboard.writeText(shareUrl)
+                    alert('Public link copied to clipboard!')
+                  }}
+                  className="btn-primary w-full py-4 flex items-center justify-center gap-3 shadow-xl"
+                >
                   <Share2 size={18} /> Share Itinerary
                 </button>
                 <Link to={`/trips/${tripId}/builder`} className="w-full py-4 flex items-center justify-center gap-3 font-bold text-[var(--color-text)] border border-[var(--color-border)] rounded-2xl hover:bg-[var(--color-surface)] transition-all bg-[var(--color-surface)]/40">
