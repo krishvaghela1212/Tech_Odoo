@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import TripCard from '../components/TripCard'
+import CinematicBackground from '../components/CinematicBackground'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -56,7 +57,10 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="container mx-auto px-6 py-10">
+    <div className="relative min-h-screen">
+      <CinematicBackground />
+      
+      <div className="container mx-auto px-6 py-10 relative z-10">
       {/* Welcome Banner */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -188,6 +192,7 @@ export default function Dashboard() {
           </div>
         </section>
       )}
+      </div>
     </div>
   )
 }

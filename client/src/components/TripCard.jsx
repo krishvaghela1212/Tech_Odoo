@@ -26,11 +26,11 @@ export default function TripCard({ trip }) {
         />
         <div className="absolute top-4 right-4 flex gap-2">
           {trip.is_public && (
-            <span className="badge bg-white/90 text-[var(--color-secondary)] backdrop-blur shadow-sm flex items-center gap-1">
-              <ExternalLink size={12} /> Public
+            <span className="px-3 py-1 text-[10px] font-black uppercase tracking-widest bg-[var(--color-bg)]/60 text-[var(--color-primary)] backdrop-blur-md rounded-lg border border-[var(--color-primary)]/30 shadow-2xl flex items-center gap-1.5">
+              <ExternalLink size={10} strokeWidth={3} /> Public
             </span>
           )}
-          <span className="badge-accent badge">
+          <span className="px-3 py-1 text-[10px] font-black uppercase tracking-widest bg-[var(--color-primary)] text-[var(--color-bg)] rounded-lg shadow-xl">
             {stopCount} {stopCount === 1 ? 'Stop' : 'Stops'}
           </span>
         </div>

@@ -23,7 +23,6 @@ export default function LandingPage() {
 
   return (
     <div className="overflow-x-hidden font-body bg-[var(--color-bg)]">
-      <Navbar />
       {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden">
         {/* Background Image with Layered Overlays */}

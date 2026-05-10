@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'motion/react'
 import { Plus, Search, Filter, Trash2, AlertCircle, Loader2 } from 'lucide-react'
 import TripCard from '../components/TripCard'
+import CinematicBackground from '../components/CinematicBackground'
 
 export default function MyTripsPage() {
   const { user } = useAuth()
@@ -82,7 +83,10 @@ export default function MyTripsPage() {
   })
 
   return (
-    <div className="container mx-auto px-6 py-10">
+    <div className="relative min-h-screen">
+      <CinematicBackground />
+
+      <div className="container mx-auto px-6 py-10 relative z-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
           <h1 className="font-display text-4xl font-bold text-[var(--color-secondary)]">My Trips</h1>
@@ -200,6 +204,7 @@ export default function MyTripsPage() {
           </div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   )
 }
