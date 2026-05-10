@@ -56,6 +56,13 @@ export default function Dashboard() {
     { name: 'Istanbul', country: 'Turkey', img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&auto=format&fit=crop&q=60' }
   ]
 
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good morning'
+    if (hour < 18) return 'Good afternoon'
+    return 'Good evening'
+  }
+
   return (
     <div className="relative min-h-screen">
       <CinematicBackground />
@@ -65,27 +72,32 @@ export default function Dashboard() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-3xl p-8 md:p-12 text-[var(--color-bg)] overflow-hidden shadow-2xl mb-12"
+        className="relative glass rounded-[2.5rem] p-8 md:p-12 text-[var(--color-text)] overflow-hidden shadow-2xl mb-12 border border-[var(--color-primary)]/20 group"
       >
+        {/* Subtle Gold Pulse Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-transparent"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-primary)]/5 blur-[100px] -mr-48 -mt-48 group-hover:bg-[var(--color-primary)]/10 transition-all duration-700"></div>
+        
         <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]"></div>
+        
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
           <div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 italic">
-              Good morning, {user?.user_metadata?.full_name?.split(' ')[0] || 'Traveler'}
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 italic text-[var(--color-secondary)]">
+              {getGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Traveler'}
             </h1>
-            <p className="text-[var(--color-bg)]/80 text-lg md:text-xl font-light max-w-md">
+            <p className="text-[var(--color-text-muted)] text-lg md:text-xl font-light max-w-md">
               Where are we going next? Your next adventure is just a few clicks away.
             </p>
           </div>
           <Link 
             to="/trips/new" 
-            className="bg-[var(--color-bg)] text-[var(--color-primary)] px-8 py-4 rounded-xl font-body font-bold flex items-center gap-2 hover:bg-[var(--color-surface)] transition-all shadow-lg active:scale-95 border border-[var(--color-primary)]/20"
+            className="bg-[var(--color-primary)] text-[var(--color-bg)] px-10 py-5 rounded-2xl font-body font-black uppercase tracking-widest text-xs flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[var(--color-primary)]/20"
           >
-            <Plus size={20} />
+            <Plus size={18} strokeWidth={3} />
             Plan New Trip
           </Link>
         </div>
-        <Globe className="absolute -bottom-10 -right-10 text-[var(--color-bg)]/10 w-64 h-64" />
+        <Globe className="absolute -bottom-10 -right-10 text-[var(--color-primary)]/5 w-64 h-64 rotate-12" />
       </motion.div>
 
       {/* Recent Trips Section */}
@@ -162,7 +174,7 @@ export default function Dashboard() {
 
       {/* Budget Snapshot - Optional/Bonus */}
       {trips.length > 0 && (
-        <section className="card bg-[var(--color-surface)] text-[var(--color-text)] border-none shadow-2xl overflow-hidden relative">
+        <section className="card glass text-[var(--color-text)] border-none shadow-2xl overflow-hidden relative">
           <div className="absolute top-0 right-0 p-8 opacity-5">
             <Compass size={120} className="text-[var(--color-accent)]" />
           </div>

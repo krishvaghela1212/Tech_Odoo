@@ -110,6 +110,19 @@
     box-shadow: 0 30px 60px -12px rgba(0,0,0,0.08);
   }
 
+  .glass {
+    background: rgba(var(--glass-bg, 255, 255, 255), 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--glass-bg, 255, 255, 255), 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass {
+    background: rgba(10, 15, 20, 0.4);
+    border: 1px solid rgba(212, 168, 67, 0.1);
+  }
+
   .input-field {
     width: 100%;
     padding: 0.85rem 1.15rem;

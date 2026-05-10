@@ -98,7 +98,7 @@ export default function MyTripsPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-4 rounded-3xl shadow-2xl border border-[var(--color-border)] mb-10 flex flex-col lg:flex-row gap-4 items-center">
+      <div className="glass p-4 rounded-3xl shadow-2xl mb-10 flex flex-col lg:flex-row gap-4 items-center">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] w-5 h-5" />
           <input 

@@ -86,7 +86,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 pt-32 lg:pt-32 relative">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-primary)] rounded-full blur-[150px] opacity-10 -mr-48 -mt-48"></div>
         
         <motion.div 

@@ -21,34 +21,41 @@ import {
 export default function LandingPage() {
   const navigate = useNavigate()
 
+  const scrollToFeatures = () => {
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
     <div className="overflow-x-hidden font-body bg-[var(--color-bg)]">
       {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden">
         {/* Background Image with Layered Overlays */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 bg-black">
           <motion.img 
-            initial={{ scale: 1, x: 0 }}
+            initial={{ scale: 1.1 }}
             animate={{ 
-              scale: 1.15,
-              x: [-10, 10, -10]
+              scale: [1.1, 1.15, 1.1],
+              x: [-15, 15, -15],
+              y: [-5, 5, -5]
             }}
             transition={{ 
-              duration: 20, 
+              duration: 25, 
               repeat: Infinity, 
-              repeatType: "reverse",
-              ease: "linear"
+              ease: "easeInOut"
             }}
             src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&q=80&w=2600" 
-            alt="Luxury Travel" 
-            className="w-full h-full object-cover opacity-30 grayscale-[0.4]"
+            alt="Cinematic Voyage" 
+            className="w-full h-full object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg)]/80 to-[var(--color-bg)]"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg)]/80 to-[var(--color-bg)]"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-bg)] via-transparent to-[var(--color-bg)]/20"></div>
+          {/* Adaptive Cinematic Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-bg)]/60 via-transparent to-[var(--color-bg)]"></div>
+          {/* Side Fades */}
+          <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[var(--color-bg)] via-transparent to-transparent opacity-90"></div>
+          <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[var(--color-bg)] via-transparent to-transparent opacity-90"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--color-bg)_100%)] opacity-60"></div>
         </div>
         
-        <div className="container mx-auto px-6 relative z-10 text-center">
+        <div className="container mx-auto px-6 relative z-10 text-center pt-32 md:pt-20">
           <motion.div
             className="max-w-7xl mx-auto"
           >
@@ -58,13 +65,15 @@ export default function LandingPage() {
                   <motion.span
                     key={i}
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    animate={{ opacity: [0, 1, 1, 0] }}
                     transition={{ 
-                      duration: 0.3, 
+                      duration: 6, 
+                      times: [0, 0.1, 0.9, 1],
                       delay: i * 0.08, 
-                      ease: "easeOut"
+                      repeat: Infinity,
+                      ease: "easeInOut"
                     }}
-                    className="inline-block text-[var(--color-secondary)] italic text-6xl md:text-8xl lg:text-[10rem]"
+                    className="text-[var(--color-secondary)] italic text-6xl md:text-8xl lg:text-[10rem]"
                   >
                     {char === " " ? "\u00A0" : char}
                   </motion.span>
@@ -75,13 +84,15 @@ export default function LandingPage() {
                   <motion.span
                     key={i}
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    animate={{ opacity: [0, 1, 1, 0] }}
                     transition={{ 
-                      duration: 0.3, 
-                      delay: 0.8 + i * 0.08, 
-                      ease: "easeOut"
+                      duration: 6, 
+                      times: [0, 0.1, 0.9, 1],
+                      delay: 1.2 + i * 0.08, 
+                      repeat: Infinity,
+                      ease: "easeInOut"
                     }}
-                    className="inline-block text-[var(--color-primary)] font-bold text-6xl md:text-8xl lg:text-[10rem] drop-shadow-[0_0_30px_rgba(212,168,67,0.3)]"
+                    className="text-[var(--color-primary)] font-bold text-6xl md:text-8xl lg:text-[10rem] drop-shadow-[0_0_30px_rgba(212,168,67,0.2)]"
                   >
                     {char === " " ? "\u00A0" : char}
                   </motion.span>
@@ -94,7 +105,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-[var(--color-text-muted)] text-base md:text-lg max-w-2xl mx-auto mt-12 font-light leading-relaxed"
+            className="text-[var(--color-text)] opacity-70 text-base md:text-lg max-w-2xl mx-auto mt-12 font-light leading-relaxed"
           >
             Traveloop turns complex itineraries into a beautifully organized journey. 
             All your stops, activities, and budgets in one perfect loop.
@@ -109,12 +120,17 @@ export default function LandingPage() {
             <Link to="/signup" className="btn-primary text-xl px-12 py-5 shadow-2xl flex items-center gap-3">
               Start Planning Free <ArrowRight size={24} />
             </Link>
-            <button 
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-12 py-5 rounded-xl border-2 border-[var(--color-border)] text-[var(--color-secondary)] font-bold hover:bg-[var(--color-surface-alt)] transition-all bg-[var(--color-surface)]/50 backdrop-blur-sm shadow-xl"
+            <motion.div 
+              whileHover={{ x: 5 }}
+              className="flex justify-center"
             >
-              See How It Works
-            </button>
+              <button 
+                onClick={scrollToFeatures}
+                className="bg-[var(--color-surface-alt)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text)] px-10 py-5 rounded-2xl font-body font-black uppercase tracking-widest text-xs hover:bg-[var(--color-surface)] transition-all active:scale-95 shadow-xl"
+              >
+                See How It Works
+              </button>
+            </motion.div>
           </motion.div>
         </div>
         
@@ -189,7 +205,10 @@ export default function LandingPage() {
                     </div>
                     <h3 className="font-display text-2xl font-bold text-[var(--color-bg)] mb-2">{f.title}</h3>
                     <p className="text-[var(--color-bg)] leading-relaxed italic text-lg font-medium">{f.desc}</p>
-                    <button className="mt-6 px-8 py-3 bg-[var(--color-bg)] text-[var(--color-primary)] rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:scale-110 active:scale-95 transition-all shadow-xl">
+                    <button 
+                      onClick={() => navigate('/dashboard')}
+                      className="mt-6 px-8 py-3 bg-[var(--color-bg)] text-[var(--color-primary)] rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:scale-110 active:scale-95 transition-all shadow-xl"
+                    >
                       Explore Tool
                     </button>
                   </div>
