@@ -1,41 +1,46 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'motion/react'
 import { Search, MapPin, Globe, Star, Plus, X, Loader2, ArrowLeft } from 'lucide-react'
 
-const CITIES = [
-  { name: 'Paris', country: 'France', region: 'Europe', cost_index: 3, popularity: 95, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Bangkok', country: 'Thailand', region: 'Asia', cost_index: 1, popularity: 90, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579367?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Tokyo', country: 'Japan', region: 'Asia', cost_index: 3, popularity: 98, img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Istanbul', country: 'Turkey', region: 'Middle East', cost_index: 2, popularity: 88, img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Lisbon', country: 'Portugal', region: 'Europe', cost_index: 2, popularity: 85, img: 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Bali', country: 'Indonesia', region: 'Asia', cost_index: 1, popularity: 92, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&auto=format&fit=crop&q=60' },
-  { name: 'New York', country: 'USA', region: 'Americas', cost_index: 3, popularity: 97, img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Cape Town', country: 'South Africa', region: 'Africa', cost_index: 2, popularity: 83, img: 'https://images.unsplash.com/photo-1580619305118-857588562d96?w=800&auto=format&fit=crop&q=60' },
-  { name: 'London', country: 'UK', region: 'Europe', cost_index: 3, popularity: 96, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Seoul', country: 'South Korea', region: 'Asia', cost_index: 2, popularity: 91, img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Barcelona', country: 'Spain', region: 'Europe', cost_index: 2, popularity: 93, img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Dubai', country: 'UAE', region: 'Middle East', cost_index: 3, popularity: 94, img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Amsterdam', country: 'Netherlands', region: 'Europe', cost_index: 3, popularity: 89, img: 'https://images.unsplash.com/photo-1512470876302-972fad2aa9dd?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Rio de Janeiro', country: 'Brazil', region: 'Americas', cost_index: 2, popularity: 87, img: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&auto=format&fit=crop&q=60' },
-  { name: 'Sydney', country: 'Australia', region: 'Americas', cost_index: 3, popularity: 95, img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&auto=format&fit=crop&q=60' },
-]
-
 export default function CitySearchPage() {
   const { tripId } = useParams()
   const navigate = useNavigate()
   
+  const [cities, setCities] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRegion, setSelectedRegion] = useState('All')
   const [selectedCity, setSelectedCity] = useState(null)
+  
+  const [isCustomMode, setIsCustomMode] = useState(false)
+  const [customCity, setCustomCity] = useState({ name: '', country: '', img: '' })
+  
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [adding, setAdding] = useState(false)
 
   const regions = ['All', 'Asia', 'Europe', 'Americas', 'Africa', 'Middle East']
 
-  const filteredCities = CITIES.filter(city => {
+  useEffect(() => {
+    fetchCities()
+  }, [])
+
+  const fetchCities = async () => {
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.from('cities').select('*').order('popularity', { ascending: false })
+      if (error) throw error
+      setCities(data || [])
+    } catch (err) {
+      console.error('Error fetching cities:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredCities = cities.filter(city => {
     const matchesSearch = city.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           city.country.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesRegion = selectedRegion === 'All' || city.region === selectedRegion
@@ -43,7 +48,8 @@ export default function CitySearchPage() {
   })
 
   const handleAddStop = async () => {
-    if (!selectedCity || !startDate || !endDate) return
+    const cityData = isCustomMode ? customCity : selectedCity
+    if (!cityData || !cityData.name || !startDate || !endDate) return
     
     setAdding(true)
     try {
@@ -52,8 +58,9 @@ export default function CitySearchPage() {
       
       const { error } = await supabase.from('stops').insert([{
         trip_id: tripId,
-        city_name: selectedCity.name,
-        country: selectedCity.country,
+        city_name: cityData.name,
+        country: cityData.country,
+        image_url: cityData.img || cityData.image_url,
         start_date: startDate,
         end_date: endDate,
         order_index: nextIndex
@@ -112,54 +119,74 @@ export default function CitySearchPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredCities.map((city, i) => (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            key={city.name}
-            className="card p-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-[var(--color-border)] bg-[var(--color-surface)]"
-          >
-            <div className="relative h-56 overflow-hidden">
-              <img 
-                src={city.img} 
-                alt={city.name} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-              <div className="absolute top-4 right-4 bg-[var(--color-surface)]/80 backdrop-blur-md border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm font-bold text-[var(--color-text)] text-xs">
-                <Star size={12} className="text-[var(--color-accent)] fill-[var(--color-accent)]" /> {city.popularity}%
-              </div>
-              <div className="absolute bottom-4 left-4 text-white">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-80">
-                  <Globe size={12} /> {city.region}
+        {/* Manual Entry Card */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={() => setIsCustomMode(true)}
+          className="card flex flex-col items-center justify-center py-12 border-dashed border-2 border-[var(--color-primary)]/30 bg-[var(--color-primary-soft)]/5 hover:bg-[var(--color-primary-soft)]/10 transition-all cursor-pointer group"
+        >
+          <div className="w-16 h-16 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:scale-110 transition-transform shadow-lg">
+            <Plus size={32} />
+          </div>
+          <h3 className="font-display text-xl font-bold text-[var(--color-secondary)]">Add Custom City</h3>
+          <p className="text-[var(--color-text-muted)] text-sm text-center mt-2 px-6">Can't find your destination? Add it manually.</p>
+        </motion.div>
+
+        {loading ? (
+          [...Array(3)].map((_, i) => (
+            <div key={i} className="card h-80 animate-pulse bg-[var(--color-surface)]/50"></div>
+          ))
+        ) : (
+          filteredCities.map((city, i) => (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              key={city.id || city.name}
+              className="card p-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-[var(--color-border)] bg-[var(--color-surface)]"
+            >
+              <div className="relative h-56 overflow-hidden">
+                <img 
+                  src={city.image_url || city.img} 
+                  alt={city.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute top-4 right-4 bg-[var(--color-surface)]/80 backdrop-blur-md border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm font-bold text-[var(--color-text)] text-xs">
+                  <Star size={12} className="text-[var(--color-accent)] fill-[var(--color-accent)]" /> {city.popularity || 80}%
                 </div>
-                <h3 className="font-display text-2xl font-bold">{city.name}</h3>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-80">
+                    <Globe size={12} /> {city.region || 'Global'}
+                  </div>
+                  <h3 className="font-display text-2xl font-bold">{city.name}</h3>
+                </div>
               </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <span className="text-[var(--color-text-muted)] font-medium italic">{city.country}</span>
-                <span className="text-[var(--color-accent)] font-bold text-lg">
-                  {'$'.repeat(city.cost_index)}
-                </span>
+              
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-[var(--color-text-muted)] font-medium italic">{city.country}</span>
+                  <span className="text-[var(--color-accent)] font-bold text-lg">
+                    {'$'.repeat(city.cost_index || 2)}
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setSelectedCity(city)}
+                  className="w-full py-3 rounded-xl border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)] hover:text-white transition-all flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-[var(--color-primary)]/20"
+                >
+                  Add Stop <Plus size={18} className="group-hover/btn:rotate-90 transition-transform" />
+                </button>
               </div>
-              <button 
-                onClick={() => setSelectedCity(city)}
-                className="w-full py-3 rounded-xl border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)] hover:text-white transition-all flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-[var(--color-primary)]/20"
-              >
-                Add Stop <Plus size={18} className="group-hover/btn:rotate-90 transition-transform" />
-              </button>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))
+        )}
       </div>
 
-      {/* Add Stop Modal */}
+      {/* Add Stop Modal (For DB Cities) */}
       <AnimatePresence>
-        {selectedCity && (
+        {selectedCity && !isCustomMode && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -167,8 +194,6 @@ export default function CitySearchPage() {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[2.5rem] p-10 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-primary-soft)] opacity-10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-              
               <button 
                 onClick={() => setSelectedCity(null)}
                 className="absolute top-8 right-8 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors z-10"
@@ -180,38 +205,92 @@ export default function CitySearchPage() {
                 <div className="w-20 h-20 bg-[var(--color-bg)] rounded-[2rem] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6 text-[var(--color-primary)] shadow-inner">
                   <MapPin size={40} />
                 </div>
-                <h2 className="font-display text-4xl font-bold text-[var(--color-secondary)] italic leading-tight mb-2">Visit {selectedCity.name}</h2>
-                <p className="text-[var(--color-text-muted)] text-sm font-medium">Define your stay in this destination.</p>
+                <h2 className="font-display text-4xl font-bold text-[var(--color-secondary)] italic mb-2">Visit {selectedCity.name}</h2>
+                <p className="text-[var(--color-text-muted)] text-sm font-medium">Select your dates for this stop.</p>
               </div>
 
               <div className="space-y-8">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Arrival</label>
-                    <input 
-                      type="date" 
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] transition-all" 
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
+                    <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Arrival</label>
+                    <input type="date" className="input-field py-4" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Departure</label>
-                    <input 
-                      type="date" 
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] transition-all" 
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
+                    <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Departure</label>
+                    <input type="date" className="input-field py-4" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                   </div>
                 </div>
-
-                <button 
-                  onClick={handleAddStop}
-                  disabled={adding || !startDate || !endDate}
-                  className="w-full btn-primary py-4 text-lg shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
-                >
+                <button onClick={handleAddStop} disabled={adding} className="w-full btn-primary py-4 text-lg">
                   {adding ? <Loader2 className="animate-spin" /> : 'Confirm Selection'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Manual Custom City Modal */}
+      <AnimatePresence>
+        {isCustomMode && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[2.5rem] p-10 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden"
+            >
+              <button 
+                onClick={() => setIsCustomMode(false)}
+                className="absolute top-8 right-8 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors z-10"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-[var(--color-primary-soft)]/20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-[var(--color-primary)]">
+                  <Plus size={40} />
+                </div>
+                <h2 className="font-display text-4xl font-bold text-[var(--color-secondary)] italic mb-2">Add New City</h2>
+                <p className="text-[var(--color-text-muted)] text-sm font-medium">Manually enter a custom destination.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">City Name</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Nathdwara" 
+                    className="input-field py-4"
+                    value={customCity.name}
+                    onChange={(e) => setCustomCity({...customCity, name: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2 ml-1">Country</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. India" 
+                    className="input-field py-4"
+                    value={customCity.country}
+                    onChange={(e) => setCustomCity({...customCity, country: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Arrival</label>
+                    <input type="date" className="input-field py-4" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="label text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Departure</label>
+                    <input type="date" className="input-field py-4" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                  </div>
+                </div>
+                <button 
+                  onClick={handleAddStop} 
+                  disabled={adding || !customCity.name || !startDate || !endDate} 
+                  className="w-full btn-primary py-4 text-lg shadow-xl shadow-[var(--color-primary-soft)]/20"
+                >
+                  {adding ? <Loader2 className="animate-spin" /> : 'Add Destination'}
                 </button>
               </div>
             </motion.div>
