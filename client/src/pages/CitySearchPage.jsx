@@ -87,7 +87,7 @@ export default function CitySearchPage() {
             <input 
               type="text" 
               placeholder="Search by city or country..." 
-              className="input-field pl-14 py-4 text-lg bg-white shadow-sm border-[var(--color-border)] focus:ring-4 ring-[var(--color-primary-soft)]/30"
+              className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl pl-14 py-5 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-soft)]/20 transition-all text-lg shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -101,8 +101,8 @@ export default function CitySearchPage() {
               onClick={() => setSelectedRegion(region)}
               className={`px-6 py-4 rounded-xl font-bold text-sm whitespace-nowrap transition-all border ${
                 selectedRegion === region 
-                  ? 'bg-[var(--color-secondary)] text-white border-[var(--color-secondary)] shadow-lg' 
-                  : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-primary)]'
+                  ? 'bg-[var(--color-primary)] text-[var(--color-bg)] border-[var(--color-primary)] shadow-lg' 
+                  : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-text)]'
               }`}
             >
               {region}
@@ -118,7 +118,7 @@ export default function CitySearchPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
             key={city.name}
-            className="card p-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 border-[var(--color-border)]"
+            className="card p-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-[var(--color-border)] bg-[var(--color-surface)]"
           >
             <div className="relative h-56 overflow-hidden">
               <img 
@@ -127,8 +127,8 @@ export default function CitySearchPage() {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm font-bold text-xs">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div className="absolute top-4 right-4 bg-[var(--color-surface)]/80 backdrop-blur-md border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm font-bold text-[var(--color-text)] text-xs">
                 <Star size={12} className="text-[var(--color-accent)] fill-[var(--color-accent)]" /> {city.popularity}%
               </div>
               <div className="absolute bottom-4 left-4 text-white">
@@ -141,14 +141,14 @@ export default function CitySearchPage() {
             
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <span className="text-[var(--color-text-muted)] font-medium">{city.country}</span>
+                <span className="text-[var(--color-text-muted)] font-medium italic">{city.country}</span>
                 <span className="text-[var(--color-accent)] font-bold text-lg">
                   {'$'.repeat(city.cost_index)}
                 </span>
               </div>
               <button 
                 onClick={() => setSelectedCity(city)}
-                className="w-full py-3 rounded-xl border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)] hover:text-white transition-all flex items-center justify-center gap-2 group/btn"
+                className="w-full py-3 rounded-xl border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)] hover:text-white transition-all flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-[var(--color-primary)]/20"
               >
                 Add Stop <Plus size={18} className="group-hover/btn:rotate-90 transition-transform" />
               </button>
@@ -160,44 +160,46 @@ export default function CitySearchPage() {
       {/* Add Stop Modal */}
       <AnimatePresence>
         {selectedCity && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[2.5rem] p-10 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden"
             >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-primary-soft)] opacity-10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+              
               <button 
                 onClick={() => setSelectedCity(null)}
-                className="absolute top-6 right-6 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                className="absolute top-8 right-8 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors z-10"
               >
                 <X size={24} />
               </button>
 
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-[var(--color-bg)] rounded-3xl flex items-center justify-center mx-auto mb-4 text-[var(--color-primary)]">
+              <div className="text-center mb-10">
+                <div className="w-20 h-20 bg-[var(--color-bg)] rounded-[2rem] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6 text-[var(--color-primary)] shadow-inner">
                   <MapPin size={40} />
                 </div>
-                <h2 className="font-display text-3xl font-bold text-[var(--color-secondary)]">Visit {selectedCity.name}</h2>
-                <p className="text-[var(--color-text-muted)]">When will you be staying in {selectedCity.name}?</p>
+                <h2 className="font-display text-4xl font-bold text-[var(--color-secondary)] italic leading-tight mb-2">Visit {selectedCity.name}</h2>
+                <p className="text-[var(--color-text-muted)] text-sm font-medium">Define your stay in this destination.</p>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-8">
+                <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Arrival</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Arrival</label>
                     <input 
                       type="date" 
-                      className="input-field" 
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] transition-all" 
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Departure</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-3 ml-1">Departure</label>
                     <input 
                       type="date" 
-                      className="input-field" 
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text)] font-bold focus:outline-none focus:border-[var(--color-primary)] transition-all" 
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
                     />
