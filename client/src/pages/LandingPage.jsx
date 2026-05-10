@@ -164,19 +164,38 @@ export default function LandingPage() {
               { icon: <Share2 size={28} />, title: "Shared Inspiration", desc: "Generate aesthetic public links for your community." },
               { icon: <CheckSquare size={28} />, title: "Packing Logic", desc: "Maintain structured checklists so you're always ready." }
             ].map((f, i) => (
-              <motion.div 
-                whileHover={{ y: -8 }}
-                key={i} 
-                className="card bg-[var(--color-surface)] text-left p-12 flex flex-col items-start gap-6 border-none shadow-2xl"
-              >
-                <div className="p-4 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-2xl">
-                  {f.icon}
-                </div>
-                <div>
-                  <h3 className="font-display text-2xl font-bold text-[var(--color-text)] mb-3">{f.title}</h3>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed italic">{f.desc}</p>
-                </div>
-              </motion.div>
+              <div key={i} className="group [perspective:1000px] h-[340px]">
+                <motion.div 
+                  initial={false}
+                  whileHover={{ rotateY: 180 }}
+                  transition={{ duration: 0.7, type: "spring", stiffness: 120, damping: 15 }}
+                  className="relative w-full h-full [transform-style:preserve-3d] cursor-pointer"
+                >
+                  {/* Front Side */}
+                  <div className="absolute inset-0 [backface-visibility:hidden] card !transition-none bg-[var(--color-surface)] p-12 flex flex-col items-center justify-center text-center gap-6 border-none shadow-2xl">
+                    <div className="p-6 bg-[var(--color-primary-soft)] text-[var(--color-primary)] rounded-3xl mb-2 group-hover:scale-110 transition-transform duration-500">
+                      {f.icon}
+                    </div>
+                    <h3 className="font-display text-3xl font-bold text-[var(--color-text)]">{f.title}</h3>
+                    <div className="mt-4 text-[var(--color-primary)] flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                      <span className="text-sm font-bold uppercase tracking-widest">Details</span>
+                      <ArrowRight size={18} />
+                    </div>
+                  </div>
+
+                  {/* Back Side */}
+                  <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] card !transition-none bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] p-12 flex flex-col items-center justify-center text-center gap-6 border-none shadow-2xl">
+                    <div className="text-[var(--color-bg)] opacity-10 absolute top-6 right-6">
+                      {f.icon}
+                    </div>
+                    <h3 className="font-display text-2xl font-bold text-[var(--color-bg)] mb-2">{f.title}</h3>
+                    <p className="text-[var(--color-bg)] leading-relaxed italic text-lg font-medium">{f.desc}</p>
+                    <button className="mt-6 px-8 py-3 bg-[var(--color-bg)] text-[var(--color-primary)] rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:scale-110 active:scale-95 transition-all shadow-xl">
+                      Explore Tool
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
             ))}
           </div>
         </div>

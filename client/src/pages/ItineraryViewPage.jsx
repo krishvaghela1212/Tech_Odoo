@@ -92,8 +92,8 @@ export default function ItineraryViewPage() {
       </div>
 
       {/* Hero Section - Now Transparent to show unified background */}
-      <div className="relative h-[320px] md:h-[400px] flex items-start overflow-hidden">
-        <div className="container mx-auto px-6 relative z-30 pt-24 md:pt-32">
+      <div className="relative h-[350px] md:h-[450px] flex items-start overflow-hidden">
+        <div className="container mx-auto px-6 relative z-30 pt-28 md:pt-36">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -145,7 +145,7 @@ export default function ItineraryViewPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 -mt-10 md:-mt-20 relative z-40">
+      <div className="container mx-auto px-6 mt-8 md:mt-12 relative z-40">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-12">
           {/* Main Itinerary */}
           <div className="lg:col-span-3 space-y-12 md:space-y-16">

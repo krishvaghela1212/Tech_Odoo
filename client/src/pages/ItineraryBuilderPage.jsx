@@ -100,7 +100,7 @@ export default function ItineraryBuilderPage() {
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-72px)] bg-[var(--color-bg)]">
       {/* Sidebar - Stops List */}
-      <aside className="w-full md:w-[350px] bg-white border-r border-[var(--color-border)] flex flex-col shadow-lg z-10">
+      <aside className="w-full md:w-[350px] bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col shadow-lg z-10">
         <div className="p-6 border-b border-[var(--color-border)] bg-[var(--color-surface-alt)]/30">
           <Link to="/trips" className="flex items-center gap-2 text-xs font-bold text-[var(--color-primary)] uppercase tracking-widest mb-4 hover:gap-3 transition-all">
             <ArrowLeft size={14} /> Back to My Trips
@@ -131,8 +131,8 @@ export default function ItineraryBuilderPage() {
                   value={stop}
                   className={`relative cursor-pointer group rounded-xl border transition-all ${
                     selectedStopId === stop.id 
-                      ? 'bg-white border-[var(--color-primary)] shadow-md ring-1 ring-[var(--color-primary)]' 
-                      : 'bg-white border-[var(--color-border)] hover:border-[var(--color-primary-soft)]'
+                      ? 'bg-[var(--color-surface-alt)] border-[var(--color-primary)] shadow-md ring-1 ring-[var(--color-primary)]' 
+                      : 'bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-primary-soft)]'
                   }`}
                   onClick={() => setSelectedStopId(stop.id)}
                 >
@@ -174,19 +174,19 @@ export default function ItineraryBuilderPage() {
           )}
         </div>
 
-        <div className="p-6 bg-[var(--color-secondary)] text-white">
+        <div className="p-6 bg-[var(--color-surface-alt)] border-t border-[var(--color-border)]">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-white/60">Trip Actions</span>
-            <Link to={`/trips/${tripId}/view`} className="text-xs font-bold text-[var(--color-accent)] hover:underline flex items-center gap-1">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)]">Trip Actions</span>
+            <Link to={`/trips/${tripId}/view`} className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1">
               Final View <ChevronRight size={14} />
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Link to={`/trips/${tripId}/budget`} className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all text-xs font-medium border border-white/10">
-              <Wallet size={18} className="text-[var(--color-accent)]" /> Budget
+            <Link to={`/trips/${tripId}/budget`} className="flex flex-col items-center gap-2 p-3 bg-[var(--color-bg)] rounded-xl hover:bg-[var(--color-primary-soft)] transition-all text-xs font-bold border border-[var(--color-border)] text-[var(--color-text)]">
+              <Wallet size={18} className="text-[var(--color-primary)]" /> Budget
             </Link>
-            <Link to={`/trips/${tripId}/checklist`} className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all text-xs font-medium border border-white/10">
-              <Plus size={18} className="text-[var(--color-accent)]" /> Packing
+            <Link to={`/trips/${tripId}/checklist`} className="flex flex-col items-center gap-2 p-3 bg-[var(--color-bg)] rounded-xl hover:bg-[var(--color-primary-soft)] transition-all text-xs font-bold border border-[var(--color-border)] text-[var(--color-text)]">
+              <Plus size={18} className="text-[var(--color-primary)]" /> Packing
             </Link>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function ItineraryBuilderPage() {
             </motion.div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center">
-              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-inner mb-8">
+              <div className="w-32 h-32 bg-[var(--color-surface)] rounded-full flex items-center justify-center shadow-inner mb-8">
                 <MapPin size={64} className="text-[var(--color-border)]" />
               </div>
               <h2 className="font-display text-3xl font-bold text-[var(--color-secondary)] mb-4">No City Selected</h2>
@@ -293,7 +293,7 @@ function ActivitiesList({ stopId, tripId }) {
     }
   }
 
-  if (loading) return <div className="space-y-4">{[1,2,3].map(i => <div key={i} className="h-24 bg-white/50 rounded-2xl animate-pulse ring-1 ring-[var(--color-border)]"></div>)}</div>
+  if (loading) return <div className="space-y-4">{[1,2,3].map(i => <div key={i} className="h-24 bg-[var(--color-surface)]/50 rounded-2xl animate-pulse ring-1 ring-[var(--color-border)]"></div>)}</div>
 
   return (
     <div className="space-y-6">
@@ -305,7 +305,7 @@ function ActivitiesList({ stopId, tripId }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               key={activity.id}
-              className="card bg-white p-5 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all group"
+              className="card p-5 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all group"
             >
               <div className="flex items-center gap-4 flex-1">
                 <div className="w-12 h-12 rounded-xl bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-primary)]">
@@ -350,8 +350,8 @@ function ActivitiesList({ stopId, tripId }) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-[var(--color-border)] ring-1 ring-white/50">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300 shadow-sm">
+        <div className="text-center py-20 bg-[var(--color-surface)]/50 rounded-3xl border-2 border-dashed border-[var(--color-border)] ring-1 ring-white/5">
+          <div className="w-16 h-16 bg-[var(--color-surface)] rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300 shadow-sm">
             <Plus size={32} />
           </div>
           <h4 className="font-display text-xl font-bold text-[var(--color-secondary)] mb-2">No activities planned</h4>

@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 
 export default function TripCard({ trip }) {
   const stopCount = trip.stops?.[0]?.count ?? trip.stops?.length ?? 0
+  const fallbackImage = `https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800`
   
   return (
     <motion.div 
@@ -12,20 +13,17 @@ export default function TripCard({ trip }) {
       className="card flex flex-col p-0 overflow-hidden group border border-[var(--color-border)] shadow-sm hover:shadow-xl transition-all duration-300 h-full"
     >
       <Link to={`/trips/${trip.id}/view`} className="relative h-48 overflow-hidden block">
-        {trip.cover_photo_url ? (
-          <img 
-            src={trip.cover_photo_url} 
-            alt={trip.name} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
-            <span className="font-display text-4xl text-white opacity-40 font-bold">
-              {trip.name.charAt(0)}
-            </span>
-          </div>
-        )}
+        <img 
+          src={trip.cover_photo_url || fallbackImage} 
+          alt={trip.name} 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            if (e.target.src !== fallbackImage) {
+              e.target.src = fallbackImage
+            }
+          }}
+        />
         <div className="absolute top-4 right-4 flex gap-2">
           {trip.is_public && (
             <span className="badge bg-white/90 text-[var(--color-secondary)] backdrop-blur shadow-sm flex items-center gap-1">
