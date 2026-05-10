@@ -31,6 +31,28 @@ export default function PackingChecklistPage() {
 
   useEffect(() => {
     fetchChecklist()
+
+    const channel = supabase
+      .channel('checklist-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'checklist_items',
+        filter: `trip_id=eq.${tripId}`
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setItems(prev => [...prev, payload.new])
+        }
+        if (payload.eventType === 'DELETE') {
+          setItems(prev => prev.filter(i => i.id !== payload.old.id))
+        }
+        if (payload.eventType === 'UPDATE') {
+          setItems(prev => prev.map(i => i.id === payload.new.id ? payload.new : i))
+        }
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
   }, [tripId])
 
   const fetchChecklist = async () => {
