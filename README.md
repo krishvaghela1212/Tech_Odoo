@@ -45,7 +45,7 @@ Traveloop is a premium, multi-city travel planning application designed to turn 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-repo/traveloop.git
+   git clone https://github.com/krishvaghela1212/Tech_Odoo.git
    cd traveloop/client
    ```
 
