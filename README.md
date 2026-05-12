@@ -97,7 +97,7 @@ client/
 ---
 
 ## 👨‍💻 Developed For
-Created as part of the **2025 Odoo Hackathon**, focusing on innovative relational data management for the travel industry.
+Created as part of the **2026 Odoo Hackathon**, focusing on innovative relational data management for the travel industry.
 
 ---
 
